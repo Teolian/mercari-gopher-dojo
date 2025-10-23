@@ -70,8 +70,3 @@ func GenerateFortune(clock Clock) Response {
 		Love:      "The person you are looking for is very close to you.",
 	}
 }
-
-func init() {
-	// Seed random number generator
-	rand.Seed(time.Now().UnixNano())
-}
