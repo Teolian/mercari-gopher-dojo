@@ -37,15 +37,22 @@ go build -o convert ./cmd/convert
 ---
 
 ### Module 01 - I/O and Testing
-**Branch**: [`module-01`](../../tree/module-01) _(in progress)_
+**Branch**: [`module-01`](../../tree/module-01)
 
 Implementation of `cat` command using `io.Reader` and `io.Writer` interfaces.
 
 ```bash
 git checkout module-01
-go build
-./ft_cat file.txt
+go build -o ft_cat
+./ft_cat testdata/simple.txt
+echo "hello" | ./ft_cat
 ```
+
+**Features:**
+- Core function using io.Reader/Writer abstraction
+- Works with files, stdin, and multiple sources
+- Table-driven tests with various input types
+- Demonstrates Go interface composition
 
 ---
 
@@ -73,6 +80,6 @@ curl localhost:8080
 ## Progress
 
 - ✅ Module 00: Complete
-- ⏳ Module 01: In progress
+- ✅ Module 01: Complete
 - 📋 Module 02: Planned
 - 📋 Module 03: Planned
