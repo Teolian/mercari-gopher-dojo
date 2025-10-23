@@ -1,67 +1,27 @@
 package main
 
 import (
-	"bufio"
-	"context"
 	"fmt"
-	"math/rand"
+	"log"
+	"net/http"
 	"os"
-	"strings"
-	"time"
+
+	"ex00/omikuji"
 )
 
-// Word list for the typing game
-var words = []string{
-	"Water", "Bulbasaur", "Pokemon", "Flamethrower",
-	"Thunder", "Pikachu", "Charizard", "Squirtle",
-	"Jigglypuff", "Mewtwo", "Eevee", "Snorlax",
-	"Gengar", "Dragonite", "Mew", "Alakazam",
-}
-
 func main() {
-	// Set random seed
-	rand.Seed(time.Now().UnixNano())
-
-	// Create context with 30 second timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	// Channel for user input
-	inputCh := make(chan string)
-
-	// Goroutine to read from stdin
-	go readInput(inputCh)
-
-	score := 0
-
-	// Game loop
-	for {
-		// Pick random word
-		word := words[rand.Intn(len(words))]
-		fmt.Println(word)
-		fmt.Print("-> ")
-
-		// Wait for input or timeout
-		select {
-		case <-ctx.Done():
-			// Timeout reached
-			fmt.Printf("\nTime's up! Score: %d\n", score)
-			return
-
-		case input := <-inputCh:
-			// Check if input matches
-			if strings.TrimSpace(input) == word {
-				score++
-			}
-		}
+	if len(os.Args) != 2 {
+		fmt.Fprintf(os.Stderr, "Usage: %s <port>\n", os.Args[0])
+		os.Exit(1)
 	}
-}
 
-// readInput reads from stdin and sends to channel
-// Runs in a separate goroutine to avoid blocking
-func readInput(ch chan<- string) {
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		ch <- scanner.Text()
+	port := os.Args[1]
+	addr := ":" + port
+
+	handler := omikuji.NewHandler(omikuji.DefaultClock)
+
+	fmt.Printf("Starting omikuji server on port %s\n", port)
+	if err := http.ListenAndServe(addr, handler); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
 	}
 }

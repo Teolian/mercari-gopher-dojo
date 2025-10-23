@@ -1,3 +1,3 @@
-module typing_game
+module ex00
 
 go 1.21

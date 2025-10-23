@@ -1,70 +1,95 @@
-# Typing Game
+# Exercise 00: Fortune API (おみくじ)
 
-Terminal-based typing game with 30-second timer. Part of Road to Mercari Gopher Dojo Module 02, Exercise 00.
+HTTP API server that returns random fortune (omikuji) in JSON format.
 
-## Description
-
-Tests typing speed and accuracy. Random words appear and the player must type them correctly within 30 seconds.
-
-## Build
+## Build and Run
 
 ```bash
-go build -o typing_game
+cd ex00
+go build -o omikuji
+./omikuji 8080
 ```
 
 ## Usage
 
 ```bash
-./typing_game
+# Start server
+./omikuji 4242 &
+
+# Get fortune
+curl localhost:4242
 ```
 
-Game will display random words. Type each word exactly and press Enter.
+## Response Format
 
-Example session:
-```
-Water
--> Water
-Bulbasaur
--> Bulbasaur
-Pokemon
--> Pokemon
-Flamethrower
--> Thunder
-Time's up! Score: 3
-```
-
-Score counts only correct matches.
-
-## Implementation
-
-**Concurrency concepts:**
-
-1. **Goroutine** - separate goroutine reads stdin to avoid blocking main game loop
-2. **Channel** - `inputCh` transfers user input from reader goroutine to main
-3. **Context** - `context.WithTimeout` creates 30-second deadline
-4. **Select** - multiplexes between user input and timeout
-
-**Key pattern:**
-```go
-ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-
-select {
-case <-ctx.Done():
-    // Timeout
-case input := <-inputCh:
-    // User input
+```json
+{
+  "fortune": "Kichi",
+  "health": "You will fully recover, but stay attentive after you do.",
+  "residence": "You will have good fortune with a new house.",
+  "travel": "When traveling, you may find something to treasure.",
+  "study": "Things will be better. It may be worth aiming for a school in a different area.",
+  "love": "The person you are looking for is very close to you."
 }
 ```
 
-This demonstrates:
-- Non-blocking I/O with goroutines
-- Channel-based communication
-- Timeout handling with context
-- Select statement for multiplexing
+## Fortune Types
 
-## Project Structure
+- `Dai-kichi` - Great blessing
+- `Kichi` - Blessing
+- `Chuu-kichi` - Middle blessing
+- `Sho-kichi` - Small blessing
+- `Sue-kichi` - Future blessing
+- `Kyo` - Curse
+- `Dai-kyo` - Great curse
 
+## Special Behavior
+
+During New Year (January 1-3), the API always returns `Dai-kichi`.
+
+## Testing
+
+```bash
+# Run all tests with coverage
+go test -cover ./...
+
+# Run tests in specific package
+cd omikuji && go test -v
 ```
-├── main.go         # Game implementation
-└── go.mod          # Module definition
+
+## Implementation Details
+
+### Package Structure
+
+- `main.go` - CLI entry point, server setup
+- `omikuji/omikuji.go` - Fortune logic and types
+- `omikuji/handler.go` - HTTP handler implementation
+- `omikuji/omikuji_test.go` - Unit tests for fortune generation
+- `omikuji/handler_test.go` - HTTP handler tests using `httptest`
+
+### Testable Time Dependency
+
+The implementation uses dependency injection for time to enable testing:
+
+```go
+type Clock func() time.Time
+
+func GenerateFortune(clock Clock) Response {
+    now := clock()
+    // Use now for date logic
+}
+```
+
+This allows tests to mock the current time and verify New Year behavior without waiting for January 1-3.
+
+### HTTP Testing
+
+Uses `net/http/httptest` package for HTTP handler testing:
+
+```go
+req := httptest.NewRequest(http.MethodGet, "/", nil)
+rec := httptest.NewRecorder()
+handler.ServeHTTP(rec, req)
+
+// Verify status code, headers, JSON structure
 ```
