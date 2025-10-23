@@ -57,11 +57,26 @@ echo "hello" | ./ft_cat
 ---
 
 ### Module 02 - Concurrency
-**Branch**: [`module-02`](../../tree/module-02) _(planned)_
+**Branch**: [`module-02`](../../tree/module-02)
+
+Go concurrency patterns using goroutines, channels, and context.
+
+```bash
+git checkout module-02
+cd ex00 && go build -o typing_game && ./typing_game
+cd ex01 && go build -o download && ./download https://example.com/file.zip
+```
 
 **Exercise 00:** Typing game with 30-second timer using goroutines and channels.
 
 **Exercise 01:** Parallel file downloader with HTTP Range requests and `errgroup`.
+
+**Concepts:**
+- Goroutines for non-blocking I/O
+- Channels for communication
+- Context with timeout and cancellation
+- Select statement for multiplexing
+- errgroup for parallel error handling
 
 ---
 
@@ -81,5 +96,5 @@ curl localhost:8080
 
 - ✅ Module 00: Complete
 - ✅ Module 01: Complete
-- 📋 Module 02: Planned
+- ✅ Module 02: Complete
 - 📋 Module 03: Planned
