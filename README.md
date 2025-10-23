@@ -81,20 +81,31 @@ cd ex01 && go build -o download && ./download https://example.com/file.zip
 ---
 
 ### Module 03 - HTTP API
-**Branch**: [`module-03`](../../tree/module-03) _(planned)_
+**Branch**: [`module-03`](../../tree/module-03)
 
-Fortune-telling API server with JSON responses and HTTP testing.
+Fortune-telling HTTP API server with JSON responses.
 
 ```bash
 git checkout module-03
-go build
+cd ex00
+go build -o omikuji
 ./omikuji 8080
 curl localhost:8080
 ```
+
+**Exercise 00:** Omikuji (fortune-telling) API that returns random fortune in JSON format.
+
+**Features:**
+- 7 fortune types: Dai-kichi, Kichi, Chuu-kichi, Sho-kichi, Sue-kichi, Kyo, Dai-kyo
+- New Year special logic (Jan 1-3): Always returns Dai-kichi
+- Testable time dependency using Clock function type
+- HTTP handler tests using `httptest`
+- JSON encoding with struct tags
+- 86.7% test coverage
 
 ## Progress
 
 - ✅ Module 00: Complete
 - ✅ Module 01: Complete
 - ✅ Module 02: Complete
-- 📋 Module 03: Planned
+- ✅ Module 03: Complete
