@@ -1,71 +1,78 @@
-# Image Converter
+# Road to Mercari Gopher Dojo
 
-CLI tool for recursive image format conversion. Part of Road to Mercari Gopher Dojo training program (Module 00).
+Training program with 4 modules. Each module is in a separate branch for independent demonstration.
 
-## Description
+## Structure
 
-Converts images between JPG, PNG, and GIF formats in a directory tree. Supports customizable input/output formats via command-line flags.
-
-## Build
+Each module exists in its own branch with complete, runnable code in the repository root.
 
 ```bash
+# Clone repository
+git clone https://github.com/Teolian/mercari-gopher-dojo.git
+cd mercari-gopher-dojo
+
+# Switch to any module
+git checkout module-00
+```
+
+## Modules
+
+### Module 00 - Image Converter
+**Branch**: [`module-00`](../../tree/module-00)
+
+CLI tool for recursive image format conversion (JPG/PNG/GIF).
+
+```bash
+git checkout module-00
 go build -o convert ./cmd/convert
+./convert -i=jpg -o=png images/
 ```
 
-Or using Makefile:
-```bash
-make build
-```
+**Features:**
+- Recursive directory traversal
+- Customizable formats via `-i` and `-o` flags
+- Alpha flattening for JPEG output
+- Table-driven tests with parallel execution
 
-## Usage
+---
 
-Convert JPG to PNG (default):
-```bash
-./convert images/
-```
+### Module 01 - I/O and Testing
+**Branch**: [`module-01`](../../tree/module-01) _(in progress)_
 
-Convert PNG to JPG:
-```bash
-./convert -i=png -o=jpg images/
-```
-
-Convert GIF to PNG:
-```bash
-./convert -i=gif -o=png images/
-```
-
-## Options
-
-- `-i` - Input format (jpg, png, gif). Default: jpg
-- `-o` - Output format (jpg, png, gif). Default: png
-
-## Testing
+Implementation of `cat` command using `io.Reader` and `io.Writer` interfaces.
 
 ```bash
-go test ./...
+git checkout module-01
+go build
+./ft_cat file.txt
 ```
 
-With coverage:
+---
+
+### Module 02 - Concurrency
+**Branch**: [`module-02`](../../tree/module-02) _(planned)_
+
+**Exercise 00:** Typing game with 30-second timer using goroutines and channels.
+
+**Exercise 01:** Parallel file downloader with HTTP Range requests and `errgroup`.
+
+---
+
+### Module 03 - HTTP API
+**Branch**: [`module-03`](../../tree/module-03) _(planned)_
+
+Fortune-telling API server with JSON responses and HTTP testing.
+
 ```bash
-go test -cover ./...
+git checkout module-03
+go build
+./omikuji 8080
+curl localhost:8080
 ```
 
-## Project Structure
+## Progress
 
-```
-├── cmd/convert/    # CLI entry point
-├── imgconv/        # Image conversion library
-│   ├── converter.go
-│   ├── formats.go
-│   ├── util.go
-│   └── imgconv_test.go
-└── testdata/       # Test fixtures
-```
-
-## Implementation Notes
-
-- Uses standard library only (no external dependencies)
-- Recursive directory traversal via `filepath.WalkDir`
-- Alpha channel flattening for JPEG output (transparent → white)
-- Error handling: continues processing on individual file errors
-- Exit code: 0 if all conversions succeed, 1 if any fail
+- ✅ Module 00: Complete
+- ⏳ Module 01: In progress
+- 📋 Module 02: Planned
+- 📋 Module 03: Planned
