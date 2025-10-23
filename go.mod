@@ -1,3 +1,3 @@
-module road-to-mercari-gopher-dojo-00
+module ft_cat
 
-go 1.24.3
+go 1.21

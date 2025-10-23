@@ -1,71 +1,69 @@
-# Image Converter
+# ft_cat
 
-CLI tool for recursive image format conversion. Part of Road to Mercari Gopher Dojo training program (Module 00).
+Implementation of `cat` command using `io.Reader` and `io.Writer` interfaces. Part of Road to Mercari Gopher Dojo training program (Module 01).
 
 ## Description
 
-Converts images between JPG, PNG, and GIF formats in a directory tree. Supports customizable input/output formats via command-line flags.
+Demonstrates Go interface composition by implementing a `cat` function that accepts `io.Reader` and `io.Writer`, enabling abstraction over data sources and destinations.
 
 ## Build
 
 ```bash
-go build -o convert ./cmd/convert
-```
-
-Or using Makefile:
-```bash
-make build
+go build -o ft_cat
 ```
 
 ## Usage
 
-Convert JPG to PNG (default):
+Read from stdin:
 ```bash
-./convert images/
+echo "hello" | ./ft_cat
 ```
 
-Convert PNG to JPG:
+Read from file:
 ```bash
-./convert -i=png -o=jpg images/
+./ft_cat testdata/simple.txt
 ```
 
-Convert GIF to PNG:
+Concatenate multiple files:
 ```bash
-./convert -i=gif -o=png images/
+./ft_cat testdata/simple.txt testdata/multiline.txt
 ```
-
-## Options
-
-- `-i` - Input format (jpg, png, gif). Default: jpg
-- `-o` - Output format (jpg, png, gif). Default: png
 
 ## Testing
 
 ```bash
-go test ./...
+go test
 ```
 
 With coverage:
 ```bash
-go test -cover ./...
+go test -cover
 ```
+
+## Implementation
+
+**Core function:**
+```go
+func cat(r io.Reader, w io.Writer) error
+```
+
+This function signature demonstrates the power of Go interfaces:
+- Works with any `io.Reader`: files, stdin, strings, bytes, network connections
+- Works with any `io.Writer`: files, stdout, buffers, network connections
+- Testable without file I/O using `strings.Reader` and `bytes.Buffer`
+
+**Key benefits of io.Reader/Writer:**
+- Composability: combine readers/writers with `io.MultiReader`, `io.TeeReader`
+- Testability: mock I/O operations without touching filesystem
+- Flexibility: same function works for files, network, memory
+- Efficiency: `io.Copy` uses optimized system calls when available
 
 ## Project Structure
 
 ```
-├── cmd/convert/    # CLI entry point
-├── imgconv/        # Image conversion library
-│   ├── converter.go
-│   ├── formats.go
-│   ├── util.go
-│   └── imgconv_test.go
-└── testdata/       # Test fixtures
+├── main.go          # CLI implementation
+├── main_test.go     # Unit tests
+└── testdata/        # Test fixtures
+    ├── simple.txt
+    └── multiline.txt
 ```
-
-## Implementation Notes
-
-- Uses standard library only (no external dependencies)
-- Recursive directory traversal via `filepath.WalkDir`
-- Alpha channel flattening for JPEG output (transparent → white)
-- Error handling: continues processing on individual file errors
-- Exit code: 0 if all conversions succeed, 1 if any fail
