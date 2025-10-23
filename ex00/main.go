@@ -19,9 +19,6 @@ var words = []string{
 }
 
 func main() {
-	// Set random seed
-	rand.Seed(time.Now().UnixNano())
-
 	// Create context with 30 second timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -29,8 +26,8 @@ func main() {
 	// Channel for user input
 	inputCh := make(chan string)
 
-	// Goroutine to read from stdin
-	go readInput(inputCh)
+	// Goroutine to read from stdin with context cancellation
+	go readInput(ctx, inputCh)
 
 	score := 0
 
@@ -59,9 +56,14 @@ func main() {
 
 // readInput reads from stdin and sends to channel
 // Runs in a separate goroutine to avoid blocking
-func readInput(ch chan<- string) {
+// Stops when context is cancelled to prevent goroutine leak
+func readInput(ctx context.Context, ch chan<- string) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		ch <- scanner.Text()
+		select {
+		case <-ctx.Done():
+			return
+		case ch <- scanner.Text():
+		}
 	}
 }
