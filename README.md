@@ -1,85 +1,115 @@
-# Road to Mercari Gopher Dojo
+# Module 02 - Concurrency
 
-Training program with 4 modules. Each module is in a separate branch for independent demonstration.
+Go concurrency patterns using goroutines, channels, and context. Part of Road to Mercari Gopher Dojo training program.
 
-## Structure
+## Exercises
 
-Each module exists in its own branch with complete, runnable code in the repository root.
+### Exercise 00: Typing Game
+**Directory**: `ex00/`
 
-```bash
-# Clone repository
-git clone https://github.com/Teolian/mercari-gopher-dojo.git
-cd mercari-gopher-dojo
-
-# Switch to any module
-git checkout module-00
-```
-
-## Modules
-
-### Module 00 - Image Converter
-**Branch**: [`module-00`](../../tree/module-00)
-
-CLI tool for recursive image format conversion (JPG/PNG/GIF).
+Terminal typing game with 30-second timer.
 
 ```bash
-git checkout module-00
-go build -o convert ./cmd/convert
-./convert -i=jpg -o=png images/
+cd ex00
+go build -o typing_game
+./typing_game
 ```
 
-**Features:**
-- Recursive directory traversal
-- Customizable formats via `-i` and `-o` flags
-- Alpha flattening for JPEG output
-- Table-driven tests with parallel execution
+**Concepts**:
+- Goroutines for non-blocking I/O
+- Channels for communication
+- Context with timeout
+- Select statement
 
 ---
 
-### Module 01 - I/O and Testing
-**Branch**: [`module-01`](../../tree/module-01)
+### Exercise 01: Parallel Downloader
+**Directory**: `ex01/`
 
-Implementation of `cat` command using `io.Reader` and `io.Writer` interfaces.
-
-```bash
-git checkout module-01
-go build -o ft_cat
-./ft_cat testdata/simple.txt
-echo "hello" | ./ft_cat
-```
-
-**Features:**
-- Core function using io.Reader/Writer abstraction
-- Works with files, stdin, and multiple sources
-- Table-driven tests with various input types
-- Demonstrates Go interface composition
-
----
-
-### Module 02 - Concurrency
-**Branch**: [`module-02`](../../tree/module-02) _(planned)_
-
-**Exercise 00:** Typing game with 30-second timer using goroutines and channels.
-
-**Exercise 01:** Parallel file downloader with HTTP Range requests and `errgroup`.
-
----
-
-### Module 03 - HTTP API
-**Branch**: [`module-03`](../../tree/module-03) _(planned)_
-
-Fortune-telling API server with JSON responses and HTTP testing.
+HTTP file downloader using parallel range requests.
 
 ```bash
-git checkout module-03
-go build
-./omikuji 8080
-curl localhost:8080
+cd ex01
+go build -o download
+./download https://example.com/file.zip
 ```
 
-## Progress
+**Concepts**:
+- HTTP Range requests
+- errgroup for error handling
+- Parallel goroutines
+- Context cancellation
 
-- ✅ Module 00: Complete
-- ✅ Module 01: Complete
-- 📋 Module 02: Planned
-- 📋 Module 03: Planned
+## Project Structure
+
+```
+├── ex00/              # Typing game
+│   ├── main.go
+│   ├── go.mod
+│   └── README.md
+└── ex01/              # Parallel downloader
+    ├── main.go
+    ├── go.mod
+    └── README.md
+```
+
+## Key Concepts
+
+### Goroutines
+Lightweight threads managed by Go runtime.
+
+```go
+go func() {
+    // Runs concurrently
+}()
+```
+
+### Channels
+Communication between goroutines.
+
+```go
+ch := make(chan string)
+go func() { ch <- "message" }()
+msg := <-ch
+```
+
+### Select
+Multiplexing over channels.
+
+```go
+select {
+case msg := <-ch1:
+    // Handle ch1
+case <-time.After(timeout):
+    // Timeout
+}
+```
+
+### Context
+Cancellation and deadlines.
+
+```go
+ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+defer cancel()
+
+select {
+case <-ctx.Done():
+    // Timeout or cancelled
+}
+```
+
+### errgroup
+Managing multiple goroutines with error handling.
+
+```go
+g, ctx := errgroup.WithContext(ctx)
+
+g.Go(func() error {
+    // Concurrent work
+    return nil
+})
+
+if err := g.Wait(); err != nil {
+    // Handle first error
+}
+```
