@@ -103,9 +103,3 @@ curl localhost:8080
 - JSON encoding with struct tags
 - 86.7% test coverage
 
-## Progress
-
-- ✅ Module 00: Complete
-- ✅ Module 01: Complete
-- ✅ Module 02: Complete
-- ✅ Module 03: Complete
